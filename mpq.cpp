@@ -211,11 +211,11 @@ VOID WINAPI sound6() {
 }
 VOID WINAPI sound7() {
     HWAVEOUT hWaveOut = 0;
-    WAVEFORMATEX wfx = { WAVE_FORMAT_PCM, 1, 8000, 8000, 1, 8, 0 };
+    WAVEFORMATEX wfx = { WAVE_FORMAT_PCM, 1, 11025, 11025, 1, 8, 0 };
     waveOutOpen(&hWaveOut, WAVE_MAPPER, &wfx, 0, 0, CALLBACK_NULL);
-    char buffer[8000 * 30] = {};
+    char buffer[11025 * 30] = {};
     for (DWORD t = 0; t < sizeof(buffer); ++t)
-        buffer[t] = static_cast<char>(t & t >> 6) + (t | t >> 8) + (t | t >> 7) + (t | t >> 9);
+        buffer[t] = static_cast<char>((t * (t << 1 ^ (t << 1) + (t >> 7) & t >> 12 | t >> 4 - (1 ^ 7 & t >> 19) | t >> 7)));
 
     WAVEHDR header = { buffer, sizeof(buffer), 0, 0, 0, 0, 0, 0 };
     waveOutPrepareHeader(hWaveOut, &header, sizeof(WAVEHDR));
